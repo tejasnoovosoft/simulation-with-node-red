@@ -22,23 +22,42 @@ const db = getDatabase();
 const voltageRef = ref(db, 'voltage');
 const temperatureRef = ref(db, 'temperature');
 
-const voltage = [];
-const temperature = [];
 
-onValue(voltageRef, (snapshot) => {
-    const data = snapshot.val();
-    voltage.push(data);
+const api_url = "https://node-red-exercise-default-rtdb.firebaseio.com/temperature"
+async function fetchData(url){
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+}
+
+let voltage = [];
+let temperature = [];
+let timeStamp = [];
+
+let myPromise = new Promise(function(myResolve, myReject) {
+    // "Producing Code" (May take some time)
+    onValue(temperatureRef, (snapshot) => {
+        const data = snapshot.val();
+        timeStamp = Object.keys(data);
+        temperature = Object.values(data);
+    });
+    onValue(voltageRef, (snapshot) => {
+        const data = snapshot.val();
+        voltage = Object.values(data);
+    });
+
+    myResolve(); // when successful
+    myReject();  // when error
 });
 
-
-onValue(temperatureRef, (snapshot) => {
-    const data = snapshot.val();
-    temperature.push(data);
-});
-
-console.log(voltage);
-console.log(temperature);
-
+myPromise.then(
+    function(value) {
+        console.log(voltage);
+        console.log(temperature); },
+    function(error) { /* code if some error */ }
+);
+// setTimeout( () => {
+// },2000);
 
 
 
