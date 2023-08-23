@@ -22,30 +22,24 @@ const db = getDatabase();
 const voltageRef = ref(db, 'voltage');
 const temperatureRef = ref(db, 'temperature');
 
-const voltage = [];
-const temperature = [];
+let voltage = [];
+let temperature = [];
+let timeStamp = [];
 
 onValue(voltageRef, (snapshot) => {
-    const data = snapshot.val();
-    voltage.push(data);
+    const FetchData = snapshot.val();
+    for(let key in FetchData) {
+        timeStamp.push(key);
+        voltage.push(FetchData[key]);
+    }
 });
+
 
 
 onValue(temperatureRef, (snapshot) => {
-    const data = snapshot.val();
-    temperature.push(data);
+    const FetchData = snapshot.val();
+    for(let key in FetchData) {
+        temperature.push(FetchData[key]);
+    }
+    drawPlot(voltage,temperature,timeStamp);
 });
-
-console.log(voltage);
-console.log(temperature);
-
-
-
-
-
-
-
-
-
-
-
