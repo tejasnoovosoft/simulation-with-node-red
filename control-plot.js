@@ -4,12 +4,16 @@ function drawPlot(voltage,temperature,timeStamp) {
     const xAxisMaxLimit = 1200;
     const yAxisMinLimit = 20;
     const yAxisMaxLimit = 380;
+    let points = [];
     const xAxisGap = (xAxisMaxLimit - xAxisMinLimit) / timeStamp.length;
     const yAxisGap = (yAxisMaxLimit - yAxisMinLimit) / 10;
     const minYAxisValue = Math.min(Math.min(...temperature),Math.min(...voltage));
     const maxYAxisValue = Math.max(Math.max(...temperature),Math.max(...voltage));
     const yAxisLabelGap = Math.ceil((maxYAxisValue-minYAxisValue)/10);
-    let yLabel = maxYAxisValue+yAxisLabelGap;
+    let yLabel = maxYAxisValue;
+    console.log(minYAxisValue + " " + maxYAxisValue);
+    console.log(temperature.length);
+    console.log(voltage.length);
     function drawAxis() {
         //X-Axis
         drawLine(svg, {
@@ -52,7 +56,7 @@ function drawPlot(voltage,temperature,timeStamp) {
         }
 
         // Label and Tics for Y-Axis
-        for (let i = 0; i <= temperature.length ; i++) {
+        for (let i = 0; i <= 10 ; i++) {
             //Axis - Tics
             drawLine(svg, {
                 x1: xAxisMinLimit - 4,
@@ -73,16 +77,29 @@ function drawPlot(voltage,temperature,timeStamp) {
     function plotDotsOnGraph(dataToBePlot,color) {
         let idx = 1;
         for (let key in dataToBePlot) {
-            console.log(dataToBePlot[key]);
             drawCircle(svg,  {
                 cx: xAxisMinLimit + (xAxisGap * (idx)),
-                cy: yAxisMinLimit + ((maxYAxisValue+yAxisLabelGap - dataToBePlot[key])/yAxisLabelGap) * yAxisGap,
+                cy: yAxisMinLimit + ((maxYAxisValue - dataToBePlot[key])/yAxisLabelGap) * yAxisGap,
                 r: 3,
                 fill: color,
             });
+            points.push({
+                x : xAxisMinLimit + (xAxisGap * (idx)),
+                y : yAxisMinLimit + ((maxYAxisValue - dataToBePlot[key])/yAxisLabelGap) * yAxisGap
+            });
+            if(key > 0) {
+                drawLine(svg , {
+                    x1 : points[key-1].x,
+                    y1 : points[key-1].y,
+                    x2 : points[key].x,
+                    y2 : points[key].y,
+                    stroke : color,
+                    strokeWidth : 2
+                })
+            }
             idx += 1;
         }
-
+        points = [];
     }
 
     function drawControlChart() {

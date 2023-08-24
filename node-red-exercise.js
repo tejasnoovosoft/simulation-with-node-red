@@ -27,6 +27,7 @@ let temperature = [];
 let timeStamp = [];
 
 onValue(voltageRef, (snapshot) => {
+
     const FetchData = snapshot.val();
     for(let key in FetchData) {
         timeStamp.push(key);
@@ -40,6 +41,10 @@ onValue(temperatureRef, (snapshot) => {
     const FetchData = snapshot.val();
     for(let key in FetchData) {
         temperature.push(FetchData[key]);
+    }
+    const myNode = document.getElementById("svg3");
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.lastChild);
     }
     drawPlot(voltage,temperature,timeStamp);
 });
