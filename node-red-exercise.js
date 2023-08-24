@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import {getDatabase, ref, onValue} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,32 +19,37 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase();
-const voltageRef = ref(db, 'voltage');
-const temperatureRef = ref(db, 'temperature');
+const dataRef = ref(db, 'data');
 
 let voltage = [];
 let temperature = [];
 let timeStamp = [];
 
-onValue(voltageRef, (snapshot) => {
-
-    const FetchData = snapshot.val();
-    for(let key in FetchData) {
-        timeStamp.push(key);
-        voltage.push(FetchData[key]);
-    }
-});
-
-
-
-onValue(temperatureRef, (snapshot) => {
-    const FetchData = snapshot.val();
-    for(let key in FetchData) {
-        temperature.push(FetchData[key]);
-    }
+function clearGraph() {
     const myNode = document.getElementById("svg3");
     while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
     }
-    drawPlot(voltage,temperature,timeStamp);
+}
+
+onValue(dataRef, (snapshot) => {
+    voltage = [];
+    timeStamp = [];
+    temperature = [];
+    const FetchData = snapshot.val();
+    const voltageData = FetchData.voltage;
+    const tempData = FetchData.temperature;
+    for (let key in voltageData) {
+        timeStamp.push(key);
+        voltage.push(voltageData[key]);
+    }
+    temperature = [];
+    for (let key in tempData) {
+        temperature.push(tempData[key]);
+    }
+    clearGraph();
+    drawPlot(voltage, temperature, timeStamp);
 });
+
+
+

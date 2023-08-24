@@ -1,19 +1,18 @@
 const svg = document.getElementById('svg3');
-function drawPlot(voltage,temperature,timeStamp) {
+
+function drawPlot(voltage, temperature, timeStamp) {
     const xAxisMinLimit = 40;
     const xAxisMaxLimit = 1200;
     const yAxisMinLimit = 20;
     const yAxisMaxLimit = 380;
     let points = [];
-    const xAxisGap = (xAxisMaxLimit - xAxisMinLimit) / timeStamp.length;
+    const xAxisGap = (xAxisMaxLimit - xAxisMinLimit) / temperature.length;
     const yAxisGap = (yAxisMaxLimit - yAxisMinLimit) / 10;
-    const minYAxisValue = Math.min(Math.min(...temperature),Math.min(...voltage));
-    const maxYAxisValue = Math.max(Math.max(...temperature),Math.max(...voltage));
-    const yAxisLabelGap = Math.ceil((maxYAxisValue-minYAxisValue)/10);
+    const minYAxisValue = Math.min(Math.min(...temperature), Math.min(...voltage));
+    const maxYAxisValue = Math.max(Math.max(...temperature), Math.max(...voltage));
+    const yAxisLabelGap = Math.ceil((maxYAxisValue - minYAxisValue) / 10);
     let yLabel = maxYAxisValue;
-    console.log(minYAxisValue + " " + maxYAxisValue);
-    console.log(temperature.length);
-    console.log(voltage.length);
+
     function drawAxis() {
         //X-Axis
         drawLine(svg, {
@@ -51,12 +50,12 @@ function drawPlot(voltage,temperature,timeStamp) {
             });
 
             //Axis-Label
-            drawText(svg, { x: (xAxisMinLimit - 3) + xAxisGap * (idx), y: yAxisMaxLimit + 20, text: `${key}` });
+            drawText(svg, {x: (xAxisMinLimit - 3) + xAxisGap * (idx), y: yAxisMaxLimit + 20, text: `${key}`});
             idx++;
         }
 
         // Label and Tics for Y-Axis
-        for (let i = 0; i <= 10 ; i++) {
+        for (let i = 0; i <= 10; i++) {
             //Axis - Tics
             drawLine(svg, {
                 x1: xAxisMinLimit - 4,
@@ -74,27 +73,28 @@ function drawPlot(voltage,temperature,timeStamp) {
             yLabel -= yAxisLabelGap;
         }
     }
-    function plotDotsOnGraph(dataToBePlot,color) {
+
+    function plotDotsOnGraph(dataToBePlot, color) {
         let idx = 1;
         for (let key in dataToBePlot) {
-            drawCircle(svg,  {
+            drawCircle(svg, {
                 cx: xAxisMinLimit + (xAxisGap * (idx)),
-                cy: yAxisMinLimit + ((maxYAxisValue - dataToBePlot[key])/yAxisLabelGap) * yAxisGap,
+                cy: yAxisMinLimit + ((maxYAxisValue - dataToBePlot[key]) / yAxisLabelGap) * yAxisGap,
                 r: 3,
                 fill: color,
             });
             points.push({
-                x : xAxisMinLimit + (xAxisGap * (idx)),
-                y : yAxisMinLimit + ((maxYAxisValue - dataToBePlot[key])/yAxisLabelGap) * yAxisGap
+                x: xAxisMinLimit + (xAxisGap * (idx)),
+                y: yAxisMinLimit + ((maxYAxisValue - dataToBePlot[key]) / yAxisLabelGap) * yAxisGap
             });
-            if(key > 0) {
-                drawLine(svg , {
-                    x1 : points[key-1].x,
-                    y1 : points[key-1].y,
-                    x2 : points[key].x,
-                    y2 : points[key].y,
-                    stroke : color,
-                    strokeWidth : 2
+            if (key > 0) {
+                drawLine(svg, {
+                    x1: points[key - 1].x,
+                    y1: points[key - 1].y,
+                    x2: points[key].x,
+                    y2: points[key].y,
+                    stroke: color,
+                    strokeWidth: 2
                 })
             }
             idx += 1;
@@ -105,8 +105,9 @@ function drawPlot(voltage,temperature,timeStamp) {
     function drawControlChart() {
         drawAxis();
         drawTicsAndLabel();
-        plotDotsOnGraph(temperature,"green");
-        plotDotsOnGraph(voltage,"red");
+        plotDotsOnGraph(temperature, "green");
+        plotDotsOnGraph(voltage, "red");
     }
+
     drawControlChart();
 }
