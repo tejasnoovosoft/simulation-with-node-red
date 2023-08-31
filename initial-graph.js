@@ -91,20 +91,35 @@ export class InitiateGraph {
 
     plotPoints(data,color) {
         for(let key in data) {
-            drawCircle(this.svg, {
-                cx: config.xAxisMinLimit + (this.xAxisGap * (parseInt(key)+1)),
-                cy: config.yAxisMinLimit + ((this.yAxisMaxValue+this.yAxisLabelGap - data[key]) / this.yAxisLabelGap) * this.yAxisGap,
-                r: 3,
-                fill: color,
-            });
+            const x = config.xAxisMinLimit + (this.xAxisGap * (parseInt(key)+1));
+            const y = config.yAxisMinLimit + ((this.yAxisMaxValue+this.yAxisLabelGap - data[key]) / this.yAxisLabelGap) * this.yAxisGap;
+            const element = document.getElementById(`${color} ${key}`);
+            if(element){
+                element.remove();
+            }
+
+                drawCircle(this.svg, {
+                    cx: x,
+                    cy: y,
+                    r: 3,
+                    fill: color,
+                    id : `${color} ${key}`
+                });
+
+
             if (key > 0) {
+                const element  = document.getElementById(`Line ${color} ${key}`);
+                if(element){
+                    element.remove();
+                }
                 drawLine(this.svg, {
-                    x1: config.xAxisMinLimit + (this.xAxisGap * (parseInt(key)+1)),
-                    y1: config.yAxisMinLimit + ((this.yAxisMaxValue+this.yAxisLabelGap - data[key]) / this.yAxisLabelGap) * this.yAxisGap,
+                    x1: x,
+                    y1: y,
                     x2: config.xAxisMinLimit + (this.xAxisGap * (parseInt(key))),
                     y2: config.yAxisMinLimit + ((this.yAxisMaxValue+this.yAxisLabelGap - data[(parseInt(key)-1)]) / this.yAxisLabelGap) * this.yAxisGap,
                     stroke: color,
-                    strokeWidth: 2
+                    strokeWidth: 2,
+                    id : `Line ${color} ${key}`
                 })
             }
         }

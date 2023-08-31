@@ -1,7 +1,14 @@
 const svgNS = "http://www.w3.org/2000/svg";
 
 function drawLine(svg, {x1 = 0, y1 = 0, x2 = 0, y2 = 0, stroke = 'black', strokeWidth = 1, strokeType = 'solid' , id = null}) {
-    const element = document.createElementNS(svgNS, 'line');
+    let element = id ? document.getElementById(id) : null;
+    if (!element) {
+        element = document.createElementNS(svgNS, 'line');
+    }
+
+    if (id) {
+        element.setAttributeNS(null, 'id', id);
+    }
     element.setAttributeNS(null, 'x1', x1.toString());
     element.setAttributeNS(null, 'y1', y1.toString());
     element.setAttributeNS(null, 'x2', x2.toString());

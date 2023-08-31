@@ -1,25 +1,22 @@
 import { InitiateGraph } from "/initial-graph.js";
 
-const svg = document.getElementById('svg3');
 
 function clearGraph(myNode) {
     while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
     }
 }
-export function drawTemperatureAndVoltageGraph(temperature,voltage,timestamp) {
-    clearGraph(svg);
+export function drawTemperatureAndVoltageGraph(svg,data,color) {
     const firstGraphObj = new InitiateGraph(svg,60,12);
     firstGraphObj.drawAxis();
     firstGraphObj.drawXAxisTics();
     firstGraphObj.drawXAxisLabel(1,60);
     firstGraphObj.drawYAxisTics();
     firstGraphObj.drawYAxisLabel(10,50);
-    firstGraphObj.plotPoints(temperature,"green");
-    firstGraphObj.plotPoints(voltage,"red");
+    firstGraphObj.plotPoints(data,color);
 }
 
-export function drawAveragePointsGraph(svg , data) {
+export function drawAveragePointsGraph(svg , data ,color) {
     clearGraph(svg);
     const secondGraphObj = new InitiateGraph(svg,60,12);
     secondGraphObj.drawAxis();
@@ -39,5 +36,5 @@ export function drawAveragePointsGraph(svg , data) {
         }
     }
     secondGraphObj.drawYAxisLabel(Math.floor(Math.min(...a)),Math.ceil(Math.max(...a)));
-    secondGraphObj.plotPoints(a.slice(-60),"blue");
+    secondGraphObj.plotPoints(a.slice(-60),color);
 }
