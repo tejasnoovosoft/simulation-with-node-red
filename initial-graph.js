@@ -38,9 +38,6 @@ export class InitiateGraph {
         });
     }
 
-    clearLabel(svg) {
-
-    }
 
     drawXAxisTics() {
         this.xAxisGap = (config.xAxisMaxLimit - config.xAxisMinLimit) / this.totalNumberXAxisData;
