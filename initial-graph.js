@@ -89,17 +89,7 @@ export class InitiateGraph {
         }
     }
 
-    clearGraph() {
-        const myNode = document.getElementById("svg3").getElementsByTagNameNS("","circle");
-        myNode.remove();
-    }
-
     plotPoints(data,color) {
-        if(data.length >= 61) {
-            data.forEach((ele,idx) => data[idx] = data[idx+1]);
-            data.pop();
-            console.log(data.length);
-        }
         for(let key in data) {
             drawCircle(this.svg, {
                 cx: config.xAxisMinLimit + (this.xAxisGap * (parseInt(key)+1)),
