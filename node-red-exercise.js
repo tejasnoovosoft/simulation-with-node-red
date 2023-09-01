@@ -1,5 +1,5 @@
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import {ref, getDatabase, onValue, onChildAdded , orderByChild , query , limitToLast} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+import {ref, getDatabase,onChildAdded , orderByChild , query , limitToLast} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
 import {drawTemperatureAndVoltageGraph} from "/control-plot.js";
 
 const firebaseConfig = {
