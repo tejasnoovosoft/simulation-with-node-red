@@ -1,4 +1,3 @@
-
 export class InitiateGraph {
     // Initial Things for particular svg
     xAxisGap;
@@ -9,7 +8,8 @@ export class InitiateGraph {
     xAxisMaxValue;
     yAxisMinValue;
     yAxisMaxValue
-    constructor(svg,numberOfTicsOfX,numberOfTicsOfY){
+
+    constructor(svg, numberOfTicsOfX, numberOfTicsOfY) {
         this.svg = svg;
         this.totalNumberXAxisData = numberOfTicsOfX;
         this.totalNumberYAxisData = numberOfTicsOfY;
@@ -53,20 +53,20 @@ export class InitiateGraph {
         }
     }
 
-    drawXAxisLabel(timeStamp,maxData,minData) {
+    drawXAxisLabel(timeStamp, maxData, minData) {
         this.xAxisMaxValue = maxData;
         this.xAxisMinValue = minData
         this.xAxisLabelGap = Math.ceil((this.xAxisMaxValue - this.xAxisMinValue) / this.totalNumberXAxisData);
-        for(let idx = 1; idx <= this.totalNumberXAxisData; idx++) {
+        for (let idx = 1; idx <= this.totalNumberXAxisData; idx++) {
             // If this element already exist then remove it create a new label instead
-            const element  = document.getElementById(`${this.svg.id}-X-Label-${idx}`);
-            if(element){
+            const element = document.getElementById(`${this.svg.id}-X-Label-${idx}`);
+            if (element) {
                 element.remove();
             }
-            const dt = new Date(parseInt(timeStamp[idx-1]));
+            const dt = new Date(parseInt(timeStamp[idx - 1]));
             drawText(this.svg, {
                 x: (config.xAxisMinLimit - 15) + this.xAxisGap * (idx),
-                y:config.yAxisMaxLimit + 20,
+                y: config.yAxisMaxLimit + 20,
                 text: `${dt.getMinutes()}:${dt.getSeconds()}`,
                 id: `${this.svg.id}-X-Label-${idx}`
             });
@@ -76,24 +76,24 @@ export class InitiateGraph {
 
     drawYAxisTics() {
         this.yAxisGap = (config.yAxisMaxLimit - config.yAxisMinLimit) / this.totalNumberYAxisData;
-        for(let idx = 0; idx < this.totalNumberYAxisData; idx++) {
+        for (let idx = 0; idx < this.totalNumberYAxisData; idx++) {
             drawLine(this.svg, {
                 x1: config.xAxisMinLimit - 4,
-                y1: config.yAxisMaxLimit - (this.yAxisGap * (idx+1)),
+                y1: config.yAxisMaxLimit - (this.yAxisGap * (idx + 1)),
                 x2: config.xAxisMinLimit,
-                y2: config.yAxisMaxLimit - (this.yAxisGap * (idx+1)),
+                y2: config.yAxisMaxLimit - (this.yAxisGap * (idx + 1)),
             });
         }
     }
 
-    drawYAxisLabel(minData,maxData) {
+    drawYAxisLabel(minData, maxData) {
         this.yAxisMaxValue = maxData;
         this.yAxisMinValue = minData
         this.yAxisLabelGap = Math.ceil((this.yAxisMaxValue - this.yAxisMinValue) / this.totalNumberYAxisData);
 
-        for(let idx = 1; idx <= this.totalNumberYAxisData; idx++) {
-            const element  = document.getElementById(`${this.svg.id}-Y-Label-${idx}`);
-            if(element){
+        for (let idx = 1; idx <= this.totalNumberYAxisData; idx++) {
+            const element = document.getElementById(`${this.svg.id}-Y-Label-${idx}`);
+            if (element) {
                 element.remove();
             }
             drawText(this.svg, {
@@ -106,37 +106,43 @@ export class InitiateGraph {
         }
     }
 
-    plotPoints(data,color) {
-        for(let key in data) {
-            const x = config.xAxisMinLimit + (this.xAxisGap * (parseInt(key)+1));
-            const y = config.yAxisMaxLimit - (this.yAxisGap * ((data[key] - this.yAxisMinValue)/(this.yAxisLabelGap)+1));
+    drawLineBetweenTwoPoints(x, y, px, py, key, color) {
+        const element = document.getElementById(`Line ${color} ${key}`);
+        if (element) {
+            element.remove();
+        }
+        drawLine(this.svg, {
+            x1: x,
+            y1: y,
+            x2: px,
+            y2: py,
+            stroke: color,
+            strokeWidth: 2,
+            id: `Line ${color} ${key}`
+        });
+    }
+
+    plotPoints(data, color) {
+        for (let key in data) {
+            const x = config.xAxisMinLimit + (this.xAxisGap * (parseInt(key) + 1));
+            const y = config.yAxisMaxLimit - (this.yAxisGap * ((data[key] - this.yAxisMinValue) / (this.yAxisLabelGap) + 1));
+            const prevX = config.xAxisMinLimit + (this.xAxisGap * (parseInt(key)));
+            const prevY = config.yAxisMaxLimit - (this.yAxisGap * ((data[parseInt(key) - 1] - this.yAxisMinValue) / (this.yAxisLabelGap) + 1));
+
             const element = document.getElementById(`${color} ${key}`);
-            if(element){
+            if (element) {
                 element.remove();
             }
-                drawCircle(this.svg, {
-                    cx: x,
-                    cy: y,
-                    r: 3,
-                    fill: color,
-                    id : `${color} ${key}`
-                });
-
+            drawCircle(this.svg, {
+                cx: x,
+                cy: y,
+                r: 3,
+                fill: color,
+                id: `${color} ${key}`
+            });
             // For draw line between two points
             if (key > 0) {
-                const element  = document.getElementById(`Line ${color} ${key}`);
-                if(element){
-                    element.remove();
-                }
-                drawLine(this.svg, {
-                    x1: x,
-                    y1: y,
-                    x2: config.xAxisMinLimit + (this.xAxisGap * (parseInt(key))),
-                    y2: config.yAxisMaxLimit - (this.yAxisGap * ((data[parseInt(key)-1] - this.yAxisMinValue)/(this.yAxisLabelGap)+1)),
-                    stroke: color,
-                    strokeWidth: 2,
-                    id : `Line ${color} ${key}`
-                })
+                this.drawLineBetweenTwoPoints(x, y, prevX, prevY, key, color);
             }
         }
     }

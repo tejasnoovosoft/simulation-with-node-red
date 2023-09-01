@@ -1,4 +1,4 @@
-import { InitiateGraph } from "/initial-graph.js";
+import {InitiateGraph} from "/initial-graph.js";
 
 // All the svg Tags
 const svg3 = document.getElementById('svg3');
@@ -6,84 +6,79 @@ const svg4 = document.getElementById('svg4');
 const svg5 = document.getElementById('svg5');
 
 // Objects for plotting Graph
-const voltageAndTemperatureDataObj = new InitiateGraph(svg3,30,12);
-const averageOfVoltage = new InitiateGraph(svg4,30,12);
-const averageOfTemperature = new InitiateGraph(svg5,30,12);
-export function drawTemperatureAndVoltageGraph(temperature , voltage , timestamp , flag) {
+const voltageAndTemperatureDataObj = new InitiateGraph(svg3, 30, 12);
+const averageOfVoltage = new InitiateGraph(svg4, 30, 12);
+const averageOfTemperature = new InitiateGraph(svg5, 30, 12);
 
-    // Flag to check for graph's axis and tics are already made or not
-    if(flag) {
-        voltageAndTemperatureDataObj.drawAxis();
-        voltageAndTemperatureDataObj.drawXAxisTics();
-        voltageAndTemperatureDataObj.drawYAxisTics();
-    }
-    // Minimum and Maximum Data from Y Axis
-    const minData = Math.min(Math.min(...temperature),Math.min(...voltage));
-    const maxData = Math.max(Math.max(...temperature),Math.max(...voltage));
-
-    // Give Label or Update Label
-    voltageAndTemperatureDataObj.drawYAxisLabel(minData,maxData);
-    voltageAndTemperatureDataObj.drawXAxisLabel(timestamp.slice(-30),1,30);
-
-    // Plot new Points
-    voltageAndTemperatureDataObj.plotPoints(temperature.slice(-30),"green");
-    voltageAndTemperatureDataObj.plotPoints(voltage.slice(-30),"red");
+function drawLayoutOfGraph(currObject) {
+    currObject.drawAxis();
+    currObject.drawXAxisTics();
+    currObject.drawYAxisTics();
 }
 
-// Function for plotting average of voltage
-export function drawVoltageAveragePointsGraph(voltage , timestamp , flag) {
+function updateLabel(currObject, minYAxisData, maxYAxisData, minXAxisData, maxXAxisData, timestamp) {
+    currObject.drawYAxisLabel(minYAxisData, maxYAxisData);
+    currObject.drawXAxisLabel(timestamp.slice(-30), 1, 30);
+}
 
-    // Flag to check for graph's axis and tics are already made or not
-    if(flag) {
-        averageOfVoltage.drawAxis();
-        averageOfVoltage.drawXAxisTics();
-        averageOfVoltage.drawYAxisTics();
-    }
-
-    // For find the average of voltage
+function countAverage(data) {
     const avgVoltage = [];
-    const newTimeStamp = [];
     let count = 0;
     let sum = 0;
-    for(let i=0;i<voltage.length;i++) {
-        sum += voltage[i];
+    for (let i = 0; i < data.length; i++) {
+        sum += data[i];
         count++;
-        if(count === 5) {
-            newTimeStamp.push(timestamp[i]);
-            avgVoltage.push(sum/5);
+        if (count === 5) {
+            avgVoltage.push(sum / 5);
             sum = 0;
             count = 0;
         }
     }
-    averageOfVoltage.drawYAxisLabel(Math.floor(Math.min(...avgVoltage)),Math.ceil(Math.max(...avgVoltage)));
-    averageOfVoltage.drawXAxisLabel(newTimeStamp.slice(-30),1,30);
-    averageOfVoltage.plotPoints(avgVoltage.slice(-30),"blue");
+    return avgVoltage;
 }
 
-export function drawTemperatureAveragePointsGraph(temperature , timestamp , flag) {
-    if(flag) {
-        averageOfTemperature.drawAxis();
-        averageOfTemperature.drawXAxisTics();
-        averageOfTemperature.drawYAxisTics();
-    }
-
-    // For find average of temperature
-    const avgTemperature = [];
+function createNewTimeStamp(time) {
     const newTimeStamp = [];
     let count = 0;
-    let sum = 0;
-    for(let i=0;i<temperature.length;i++) {
-        sum += temperature[i];
+    for (let i = 0; i < time.length; i++) {
         count++;
-        if(count === 5) {
-            newTimeStamp.push(timestamp[i]);
-            avgTemperature.push(sum/5);
-            sum = 0;
+        if (count === 5) {
+            newTimeStamp.push(time[i]);
             count = 0;
         }
     }
+    return newTimeStamp
+}
 
-    averageOfTemperature.drawXAxisLabel(newTimeStamp.slice(-30),1,30);
-    averageOfTemperature.drawYAxisLabel(Math.floor(Math.min(...avgTemperature)),Math.ceil(Math.max(...avgTemperature)));
-    averageOfTemperature.plotPoints(avgTemperature.slice(-30),"purple");
+export function drawTemperatureAndVoltageGraph(temperature, voltage, timestamp, flag) {
+
+    // Flag to check for graph's axis and tics are already made or not
+    if (flag) {
+        drawLayoutOfGraph(voltageAndTemperatureDataObj);
+        drawLayoutOfGraph(averageOfTemperature);
+        drawLayoutOfGraph(averageOfVoltage);
+    }
+
+    // Voltage and Temperature
+    const minData = Math.min(Math.min(...temperature), Math.min(...voltage));
+    const maxData = Math.max(Math.max(...temperature), Math.max(...voltage));
+    updateLabel(voltageAndTemperatureDataObj, minData, maxData, 1, 30, timestamp);
+    voltageAndTemperatureDataObj.plotPoints(temperature.slice(-30), "green");
+    voltageAndTemperatureDataObj.plotPoints(voltage.slice(-30), "red");
+
+    const newTimeStamp = createNewTimeStamp(timestamp);
+
+    // Voltage's Average
+    const averageVoltage = countAverage(voltage);
+    updateLabel(averageOfVoltage, Math.floor(Math.min(...averageVoltage)),
+        Math.ceil(Math.max(...averageVoltage)),
+        1, 30, newTimeStamp);
+    averageOfVoltage.plotPoints(averageVoltage.slice(-30), "purple");
+
+    // Temperature's Average
+    const averageTemperature = countAverage(temperature);
+    updateLabel(averageOfTemperature, Math.floor(Math.min(...averageTemperature)),
+        Math.ceil(Math.max(...averageTemperature)),
+        1, 30, newTimeStamp);
+    averageOfTemperature.plotPoints(averageTemperature.slice(-30), "blue");
 }
