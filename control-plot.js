@@ -14,7 +14,6 @@ export function drawTemperatureAndVoltageGraph(temperature , voltage , timestamp
     }
     const minData = Math.min(Math.min(...temperature),Math.min(...voltage));
     const maxData = Math.max(Math.max(...temperature),Math.max(...voltage));
-    console.log(minData + " " + maxData);
     voltageAndTemperatureDataObj.drawYAxisLabel(minData,maxData);
     voltageAndTemperatureDataObj.drawXAxisLabel(timestamp.slice(-30),1,30);
     voltageAndTemperatureDataObj.plotPoints(temperature.slice(-30),"green");
@@ -65,7 +64,7 @@ export function drawTemperatureAveragePointsGraph(temperature , timestamp , flag
             count = 0;
         }
     }
-    averageOfTemperature.drawYAxisLabel(Math.floor(Math.min(...avgTemperature)),Math.ceil(Math.max(...avgTemperature)));
     averageOfTemperature.drawXAxisLabel(newTimeStamp.slice(-30),1,30);
+    averageOfTemperature.drawYAxisLabel(Math.floor(Math.min(...avgTemperature)),Math.ceil(Math.max(...avgTemperature)));
     averageOfTemperature.plotPoints(avgTemperature.slice(-30),"purple");
 }

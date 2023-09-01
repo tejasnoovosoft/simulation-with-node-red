@@ -39,15 +39,12 @@ let flag = true;
 let promiseForTemp,promiseForVoltage;
 onChildAdded(temperatureDataRef,(data)=>{
     promiseForTemp = new Promise(function (res , rej){
-        temperatureData.push(data.val());
-        timeStamp.push(data.key);
-        res();
+        res(temperatureData.push(data.val()));
     });
 });
 onChildAdded(voltageDataRef,(data)=>{
     promiseForVoltage = new Promise(function (res , rej){
-        voltageData.push(data.val());
-        res();
+        res([voltageData.push(data.val()),timeStamp.push(data.key)]);
     });
     promiseForTemp.then(function (value){
         promiseForVoltage.then( function (value) {
