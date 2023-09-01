@@ -1,5 +1,6 @@
 
 export class InitiateGraph {
+    // Initial Things for particular svg
     xAxisGap;
     yAxisGap;
     xAxisLabelGap;
@@ -57,6 +58,7 @@ export class InitiateGraph {
         this.xAxisMinValue = minData
         this.xAxisLabelGap = Math.ceil((this.xAxisMaxValue - this.xAxisMinValue) / this.totalNumberXAxisData);
         for(let idx = 1; idx <= this.totalNumberXAxisData; idx++) {
+            // If this element already exist then remove it create a new label instead
             const element  = document.getElementById(`${this.svg.id}-X-Label-${idx}`);
             if(element){
                 element.remove();
@@ -119,6 +121,8 @@ export class InitiateGraph {
                     fill: color,
                     id : `${color} ${key}`
                 });
+
+            // For draw line between two points
             if (key > 0) {
                 const element  = document.getElementById(`Line ${color} ${key}`);
                 if(element){
